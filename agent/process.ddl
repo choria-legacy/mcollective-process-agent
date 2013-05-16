@@ -23,6 +23,14 @@ action "list", :description => "List Processes" do
           :type        => :boolean,
           :optional    => true
 
+    input :user,
+          :prompt      => "User's processes only",
+          :description => "Restrict the process list to processes executed as defined user",
+          :type        => :string,
+          :validation  => :shellsafe,
+          :optional    => true,
+          :maxlength    => 50
+
     output :pslist,
            :description => "Process List",
            :display_as => "The Process List"

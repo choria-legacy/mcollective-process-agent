@@ -14,8 +14,9 @@ module MCollective
       action 'list' do
         pattern = request[:pattern] || '.'
         zombies = request[:just_zombies] || false
+        user    = request[:user] || false
 
-        reply[:pslist] = get_proc_list(pattern, zombies)
+        reply[:pslist] = get_proc_list(pattern, zombies, user)
       end
 
       private
@@ -39,22 +40,47 @@ module MCollective
         result
       end
 
-      def get_proc_list(pattern, zombies)
-        result = Sys::ProcTable.ps.map do |ps|
-          ret = nil
-
-          if ps['cmdline'] =~ /#{pattern}/
-            if zombies
-              ret = ps_to_hash(ps) if ps[:state] == 'Z'
-            else
-              ret = ps_to_hash(ps)
-            end
-          end
-
-          ret
+      def get_uid(user)
+        begin
+          Etc.getpwnam(user).uid
+        rescue
+          Log.debug("Could not get uid for user: #{user}")
+          false
         end
+      end
 
-        result.compact
+      def get_proc_list(pattern, zombies, user)
+        if user
+          if uid=get_uid(user)
+            result = Sys::ProcTable.ps.map do |ps|
+              ret = nil
+              if ps['cmdline'] =~ /#{pattern}/ && ps['uid'] == uid
+                if zombies
+                  ret = ps_to_hash(ps) if ps[:state] == 'Z'
+                else
+                  ret = ps_to_hash(ps)
+                end
+              end
+              ret
+            end
+            result.compact
+          else
+            []
+          end
+        else
+          result = Sys::ProcTable.ps.map do |ps|
+            ret = nil
+              if ps['cmdline'] =~ /#{pattern}/
+                if zombies
+                  ret = ps_to_hash(ps) if ps[:state] == 'Z'
+                else
+                  ret = ps_to_hash(ps)
+                end
+              end
+              ret
+          end
+          result.compact
+        end
       end
     end
   end
