@@ -14,17 +14,17 @@ module MCollective
 
       describe 'list_action' do
         it 'should pass the pattern input' do
-          @agent.expects(:get_proc_list).with('rspec', false)
+          @agent.expects(:get_proc_list).with('rspec', false, false)
           @agent.call(:list, :pattern => 'rspec')
         end
 
         it 'should pass the just_zombies input' do
-          @agent.expects(:get_proc_list).with('.', true)
+          @agent.expects(:get_proc_list).with('.', true, false)
           @agent.call(:list, :just_zombies => true)
         end
 
         it 'should get the process list' do
-          @agent.expects(:get_proc_list).with('.', false).returns('rspec')
+          @agent.expects(:get_proc_list).with('.', false, false).returns('rspec')
           result = @agent.call(:list)
           result.should be_successful
           result.should have_data_items({:pslist => 'rspec'})
@@ -55,22 +55,37 @@ module MCollective
       end
 
       describe '#get_proc_list' do
-        let(:input) { [{'cmdline' => 'rspec1', :state => 'S'}, {'cmdline' => 'rspec2', :state => 'Z'}] }
+        let(:input) { [{'cmdline' => 'rspec1', :state => 'S', 'uid' => 500}, {'cmdline' => 'rspec2', :state => 'Z', 'uid' => 501}] }
         module Sys; module ProcTable; end; end;
 
         it 'should return processes that match the supplied pattern' do
           Sys::ProcTable.stubs(:ps).returns(input)
           @agent.stubs(:ps_to_hash).with(input[0]).returns(input[0])
-          result = @agent.send(:get_proc_list, 'rspec1', false)
-          result.should == [{'cmdline' => 'rspec1', :state => 'S'}]
+          result = @agent.send(:get_proc_list, 'rspec1', false, false)
+          result.should == [{'cmdline' => 'rspec1', :state => 'S', 'uid' => 500}]
         end
 
         it 'should return only zombies if just_zombies input is supplied' do
           Sys::ProcTable.stubs(:ps).returns(input)
           @agent.stubs(:ps_to_hash).with(input[1]).returns(input[1])
-          result = @agent.send(:get_proc_list, 'rspec2', true)
-          result.should == [{'cmdline' => 'rspec2', :state => 'Z'}]
+          result = @agent.send(:get_proc_list, 'rspec2', true, false)
+          result.should == [{'cmdline' => 'rspec2', :state => 'Z', 'uid' => 501}]
         end
+
+        it 'should return only processes executed as supplied user' do
+          Sys::ProcTable.stubs(:ps).returns(input)
+          @agent.stubs(:get_uid).with('user1').returns(500)
+          result = @agent.send(:get_proc_list, '.', false, 'user1')
+          result.should == [{'cmdline' => 'rspec1', :state => 'S', 'uid' => 500}]
+        end
+
+        it 'should return only processes executed as supplied user' do
+          Sys::ProcTable.stubs(:ps).returns(input)
+          @agent.stubs(:get_uid).with('user2').returns(502)
+          result = @agent.send(:get_proc_list, '.', false, 'user2')
+          result.should == []
+        end
+
       end
     end
   end
