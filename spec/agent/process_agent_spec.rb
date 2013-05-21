@@ -54,6 +54,28 @@ module MCollective
         end
       end
 
+      describe '#get_uid' do
+        let(:name) { mock }
+
+        before do
+          @agent.stubs(:require).with('etc')
+          Etc.expects(:getpwnam).with('user1').returns(name)
+        end
+
+        it 'should transform username into uid' do
+          name.expects(:uid).returns('500')
+          result = @agent.send(:get_uid, 'user1')
+          result.should == '500'
+        end
+
+        it 'should log and return false if uid cannot be determined' do
+          name.expects(:uid).raises('error')
+          Log.expects(:debug).with('Could not get uid for user: user1')
+          result = @agent.send(:get_uid, 'user1')
+          result.should be_false
+        end
+      end
+
       describe '#get_proc_list' do
         let(:input) { [{'cmdline' => 'rspec1', :state => 'S', 'uid' => 500}, {'cmdline' => 'rspec2', :state => 'Z', 'uid' => 501}] }
         module Sys; module ProcTable; end; end;
