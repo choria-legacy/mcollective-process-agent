@@ -1,0 +1,17 @@
+---
+project: 'mcollective-process'
+author: 'Puppet Labs'
+email: 'info@puppetlabs.com'
+homepage: 'https://github.com/puppetlabs/mcollective-process-agent'
+summary: 'Inspect running processes'
+description: 'Inspect running processes'
+# files and gem_files are space separated lists
+files:
+  - agent
+  - application
+  - ext
+  - util
+# List of packaging related templates to evaluate before the tarball is packed
+templates:
+  - "ext/redhat/mcollective-process.spec.erb"
+  - "ext/debian/changelog.erb"
