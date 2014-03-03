@@ -1,0 +1,69 @@
+# VERSION is subbed out during rake srpm process
+%global realversion <%= @version %>
+%global rpmversion <%= @rpmversion %>
+
+Summary:   Inspect running processes
+Name:      mcollective-process
+Version:   %{rpmversion}
+Release:   <%= @rpmrelease -%>%{?dist}
+Vendor:    %{?_host_vendor}
+License:   ASL 2.0
+URL:       https://github.com/puppetlabs/mcollective-process-agent
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch: noarch
+Group:     System Tools
+Source0:   mcollective-process-%{realversion}.tar.gz
+
+%description
+Inspect running processes
+
+%prep
+%setup -q  -n %{name}-%{realversion}
+
+%build
+
+%install
+rm -rf %{buildroot}
+%{__install} -d -m0755 %{buildroot}%{_libexecdir}/mcollective/mcollective
+cp -a agent application util %{buildroot}%{_libexecdir}/mcollective/mcollective
+
+%clean
+rm -rf %{buildroot}
+
+%package agent
+Requires: mcollective-process-common = %{version}-%{release}
+Group: System Tools
+Summary:   Inspect running processes
+
+%package client
+Requires: mcollective-process-common = %{version}-%{release}
+Group: System Tools
+Summary:   Inspect running processes
+
+%package common
+Requires: mcollective-common >= 2.2.1
+Group: System Tools
+Summary:   Inspect running processes
+
+%description agent
+Inspect running processes
+
+%description client
+Inspect running processes
+
+%description common
+Inspect running processes
+
+%files agent
+%{_libexecdir}/mcollective/mcollective/agent/*.rb
+
+%files client
+%{_libexecdir}/mcollective/mcollective/application/*.rb
+
+%files common
+%{_libexecdir}/mcollective/mcollective/agent/*.ddl
+%{_libexecdir}/mcollective/mcollective/util/*
+
+%changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  <%= @rpmversion %>-<%= @rpmrelease %>
+- Build for <%= @version %>
