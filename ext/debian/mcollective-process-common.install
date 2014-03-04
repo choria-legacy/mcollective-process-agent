@@ -1,2 +1,3 @@
 util/* usr/share/mcollective/plugins/mcollective/util/
 agent/*.ddl usr/share/mcollective/plugins/mcollective/agent/
+data/*.ddl usr/share/mcollective/plugins/mcollective/data/
