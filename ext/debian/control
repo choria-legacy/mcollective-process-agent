@@ -1,0 +1,22 @@
+Source: mcollective-process
+Homepage: https://github.com/puppetlabs/mcollective-process-agent
+Section: utils
+Priority: extra
+Maintainer: Puppet Labs
+Build-Depends: cdbs, debhelper
+Standards-Version: 3.8.0
+
+Package: mcollective-process-agent
+Architecture: all
+Depends: mcollective-process-common(= ${binary:Version}), libsys-proctable-ruby
+Description: Inspect running processes
+
+Package: mcollective-process-client
+Architecture: all
+Depends: mcollective-process-common(= ${binary:Version})
+Description: Inspect running processes
+
+Package: mcollective-process-common
+Architecture: all
+Depends: mcollective-common(>= 2.2.1)
+Description: Inspect running processes
