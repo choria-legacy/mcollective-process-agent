@@ -9,6 +9,11 @@ module  MCollective
              :arguments   => ['-z', '--zombies'],
              :type        => :bool
 
+      option :user,
+             :description => "Only list defined user's processes",
+             :arguments   => ['-u ARG', '--user=ARG'],
+             :type        => String
+
       option :fields,
              :description => 'Comma seperated list of outputs to display',
              :arguments   => ['--fields=FIELDS'],
@@ -72,7 +77,11 @@ module  MCollective
       def main
         PluginManager.loadclass('MCollective::Util::Process::Numeric')
         ps = rpcclient('process')
-        ps_result = ps.send(configuration[:action], :pattern => configuration[:pattern], :just_zombies => configuration[:just_zombies])
+        if configuration[:user]
+          ps_result = ps.send(configuration[:action], :pattern => configuration[:pattern], :just_zombies => configuration[:just_zombies], :user => configuration[:user])
+        else
+          ps_result = ps.send(configuration[:action], :pattern => configuration[:pattern], :just_zombies => configuration[:just_zombies])
+        end
         ps_fields = configuration[:fields]
         field_size = Array.new(ps_fields.size).fill(0) {|i| ps_fields[i].size}
         final_output = {}
