@@ -4,7 +4,7 @@ An agent that can be used to list running processes on remote machines.
 
 ##Installation
 
-* Follow the [basic plugin install guide](http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/InstalingPlugins).
+* Follow the [plugin install guide](http://docs.puppet.com/mcollective/deploy/plugins.html).
 * You need to have the [sys-proctable](http://raa.ruby-lang.org/project/sys-proctable/) Gem installed.
 
 ##Configuration
