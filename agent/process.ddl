@@ -3,7 +3,7 @@ metadata    :name        => "process",
             :author      => "R.I.Pienaar",
             :license     => "ASL 2.0",
             :version     => "3.0.0",
-            :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
+            :url         => "https://github.com/ripienaar/mcollective-process-agent",
             :timeout     => 10
 
 requires :mcollective => '2.2.1'
