@@ -2,7 +2,7 @@ module  MCollective
   class Application
     class Process<Application
       description 'Distributed Process Management'
-      usage 'mco pgrep <pattern> [-z] [--fields=FIELDS]'
+      usage 'mco process <pattern> [-z] [--fields=FIELDS]'
 
       option :just_zombies,
              :description => 'Only list defunct processes',
