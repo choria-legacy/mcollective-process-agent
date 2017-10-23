@@ -24,6 +24,7 @@ module  MCollective
              :arguments   => ['--silent'],
              :type        => :bool
 
+      require 'sys/proctable'
       def handle_message(action, message, *args)
         messages = {1 => 'Please provide an action',
                     2 => "'%s' specified as process field. Valid options are %s",
